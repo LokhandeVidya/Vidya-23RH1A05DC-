@@ -1,9 +1,11 @@
 //GET METHOD => HTTP
 const express= require('express'); //importing the express package
 const mongoose=require('mongoose');
+const cors=require('cors');
 const Todo=require('./MODEL/Todo');
 const app=express();
 app.use(express.json());
+app.use(cors());
 //mongodb://localhost:27017//TodoDB
 mongoose.connect("mongodb://localhost:27017/TodoDB",{useNewUrlParser:true,useUnifiedTopology:true
     }).then(()=>{
