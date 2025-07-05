@@ -1,17 +1,47 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+//GET METHOD => HTTP
+const express= require('express'); //importing the express package
+const mongoose=require('mongoose');
+const Todo=require('./MODEL/Todo');
+const app=express();
+app.use(express.json());
+//mongodb://localhost:27017//TodoDB
+mongoose.connect("mongodb://localhost:27017/TodoDB",{useNewUrlParser:true,useUnifiedTopology:true
+    }).then(()=>{
+        console.log("Connection established");
+    }).catch(err=>{
+        console.log("Error occured",err);
+    });
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+app.get("/userlist",(req,res)=>{
+    res.send("userlist method called...")
+    
+});
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+
+app.post("/dbaddtodo", async (req,res)=>{
+    //const data = req.body;
+    //res.send(data);
+    //const newTask = new Todo({taskname:req.body.taskname});
+    //newTask.save();
+    //res.send(newTask);
+    const newTask = new Todo({taskname:req.body.taskname});
+    newTask.save();
+    res.json(newTask);
+});
+
+app.get("/dbfetchtodo", async (req,res)=>{
+    const tasks= await Todo.find();
+    res.json(tasks);
+});
+app.put("/dbdatatodo",(req,res)=>{
+    res.send("data method called...")
+    
+});
+app.delete("/dbdeletetodo",(req,res)=>{
+    res.send("delete method called...")
+    
+});
+app.listen(5000,function(){
+    console.log("port listening on 5000");
+});
+
