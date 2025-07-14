@@ -1,25 +1,10 @@
 <html>
     <head>
 
-
     </head>
     <body>
-        <h1>Chat App</h1>
-        <input type="text" id="ques" placeholder="Enter Query">
-        <button onclick="askQuestion()">Send</button>
-        <div id="conversation"></div>
-        <script>
-            function askQuestion(){
-                let userInput=document.getElementById("ques").value;
-                let chatconv=document.getElementById("conversation");
-                chatconv.innerHTML+=`<h5>you:${userInput}`;
-                fetch(`/getmessage?ques=${userInput}`)
-                .then(response=>response.text())
-                .then(data=>{
-                    chatconv.innerHTML+=`<h5>bot:${data}`;
-                })
-                document.getElementById('ques').value="";
-            }
-        </script>
+        <h1>Multimodel AI</h1>
+        <a href="{{url_for('imgtotext')}}">Image to text</a><br/>
+        <a href="{{url_for('vidtotext')}}">Video to text</a>
     </body>
 </html>
