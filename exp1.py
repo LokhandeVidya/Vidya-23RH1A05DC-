@@ -1,33 +1,35 @@
-import nltk 
-nltk.download('punkt') #punctuation
-nltk.download('punkt_tab') #tokenization
-nltk.download('stopwords') #remove common english words
-nltk.download('wordnet') #convert no grammatical words into grammatical words
-from nltk.tokenize import word_tokenize #method
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-import string
+import pandas as pd
+import mysql.connector
 
-text="""Machine learing ,Deep learning and natural language processing in are following the better
-     algorithm  playing role in AL concepts"""
+# Step 1: Extract
+df = pd.read_csv("SuperMarket Analysis.csv")  # Fixed typo: 'read_cvs' ➜ 'read_csv'
 
-#slpitting sentence into words
-words= word_tokenize(text)
-print(words)
+# Step 2: Transform
+df['Total_price'] = df['Quantity'] * df['Unit price']
 
-#stopwords remove english common words and store in another list
-stop_words=set(stopwords.words('english'))
-filtered=[w for w in words if w.lower() not in stop_words] #w indicates each and every word it check
-print(filtered)
+# Step 3: Load to MySQL
+conn = mysql.connector.connect(
+    host="localhost",          # Fixed typo: 'loacalhost' ➜ 'localhost'
+    user="root",
+    password="",
+    database="sales_db"
+)
+cursor = conn.cursor()
 
-#for removing punctuations(special symbols)
-#import string
-remove_pun=[w for w in filtered if w not in string.punctuation]
-print(remove_pun)
+# Use backticks for column names with spaces
+for _, row in df.iterrows():
+    cursor.execute("""
+        INSERT INTO products (`Product line`, `Quantity`, `Unit price`, `Total_price`)
+        VALUES (%s, %s, %s, %s)
+    """, (
+        row['Product line'],
+        int(row['Quantity']),
+        float(row['Unit price']),
+        float(row['Total_price'])
+    ))
 
-#lemmatization
-lemmatizer=WordNetLemmatizer()
-convert_words=[w lemmatizer.lemmatize(w) for word in remove_pun]
-print(convert_words)
+conn.commit()
+cursor.close()
+conn.close()
 
-
+print("ETL to MySQL completed successfully.")
